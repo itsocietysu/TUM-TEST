@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% for test in tests %}
+        <h3> {{ test.0.name }} </h3>
+        <table>
+            <tr>
+                {% for i in test.1 %}
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for answer in test.1 %}
+                    <td>
+                        {{ answer.answer }}
+                    </td>
+                {% endfor %}
+            </tr>
+        </table>
+        <a href="/results/{{ jedi_id }}/accept/{{ test.0.id }}">
+            <button>Одобрить</button>
+        </a>
+    {% endfor %}
+
+{% endblock %}
