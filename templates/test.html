@@ -1,10 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_ul }}
-    <input type="submit" value="Ввести" />
-</form>
+    <form action="" method="POST">
 
+    {% csrf_token %}
+
+    {{ formset.management_form }}
+        {% for form in formset %}
+            {% for answer in form %}
+            {{ answer.label_tag }}
+            {{ answer }}
+
+        {% endfor %}
+
+    {% endfor %}
+
+<input type="submit" value="Ответить" />
+</form>
 {% endblock %}

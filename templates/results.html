@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-
+    {% if not tests %}
+        <h3>Все тесты проверены</h3>
+    {% endif %}
     {% for test in tests %}
         <h3> {{ test.0.name }} </h3>
         <table>

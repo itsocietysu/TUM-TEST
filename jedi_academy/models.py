@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 from django.db import models
-from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -32,19 +31,20 @@ class Planet(models.Model):
 #     planet = models.ForeignKey(Planet, related_name='jedies', null=True, on_delete=models.SET_NULL)
 
 
-class Candidate(models.Model):
+class Jedi(models.Model):
     name = models.CharField(max_length=100)
-    planet = models.ForeignKey(Planet, related_name='candidates', null=True, on_delete=models.SET_NULL)
-    age = models.IntegerField()
-    email = models.EmailField(default='', max_length=100)
+    planet = models.ForeignKey(Planet, related_name='jedies', null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
 
 
-class Jedi(models.Model):
+class Candidate(models.Model):
     name = models.CharField(max_length=100)
-    planet = models.ForeignKey(Planet, related_name='jedies', null=True, on_delete=models.SET_NULL)
+    planet = models.ForeignKey(Planet, related_name='candidates', null=True, on_delete=models.SET_NULL)
+    age = models.IntegerField()
+    email = models.EmailField(default='', max_length=100)
+    jedi = models.ForeignKey(Jedi, related_name='padavans', default=None, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name

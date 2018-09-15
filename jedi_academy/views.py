@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 
 from django.shortcuts import render, redirect
+from django.core.mail import send_mail
 from .models import *
 from .forms import *
 
@@ -37,18 +38,25 @@ def candidate(request):
 
 
 def test(request, candidate_id):
-    if request.method == 'POST':
-        form = TestForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            print(cd)
+    if request.method == "POST":
+        formset = TestFormSet(request.POST)
+        if formset.is_valid():
+            new_test = Test(candidate_id=candidate_id)
+            new_test.save()
+            for form, q in zip(formset.forms, Question.objects.all()):
+                if form.is_valid():
+                    new_result = TestResult(answer=form.cleaned_data['answer'], question_id=q.id, test_id=new_test.id)
+                    new_result.save()
+        return redirect('/')
     else:
-        form = TestForm()
-        return render(
-            request,
-            'test.html',
-            {'form': form}
-        )
+        formset = TestFormSet()
+        for form, q in zip(formset, Question.objects.all()):
+            form['answer'].label = q.text
+        context = {
+            'formset': formset,
+        }
+        return render(request, 'test.html', context)
+
 
 
 def jedi(request):
@@ -56,7 +64,6 @@ def jedi(request):
         form = JediForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            print('JEDI:                                  ', cd['jedi'])
             jedi_id = 1
             return redirect('/results/{}/'.format(jedi_id))
     else:
@@ -72,12 +79,9 @@ def results(request, jedi_id):
     tests = []
     jedi = Jedi.objects.get(pk=jedi_id)
     for test in Test.objects.all():
-        if (test.candidate.planet.id == jedi.planet.id):
+        if (test.candidate.planet.id == jedi.planet.id and not test.candidate.jedi):
             res = TestResult.objects.filter(test=test)
             tests.append([test.candidate, res])
-    print(tests)
-    for test in tests:
-        print(test[0], test[1])
     return render(
         request,
         'results.html',
@@ -86,3 +90,14 @@ def results(request, jedi_id):
          'jedi_id': jedi_id
         }
     )
+
+
+def accept(request, jedi_id, candidate_id):
+    padavan = Candidate.objects.get(pk=candidate_id)
+    jedi = Jedi.objects.get(pk=jedi_id)
+    padavan.jedi = jedi
+    padavan.save()
+    email_subject = 'Вы приняты!'
+    email_body = 'Джедай {} принял вас в подаваны!'.format(jedi.name)
+    send_mail(email_subject, email_body, '', [padavan.email], fail_silently=False)
+    return redirect('/results/{}/'.format(jedi_id))
