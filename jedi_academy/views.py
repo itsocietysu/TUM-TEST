@@ -123,7 +123,7 @@ def all_padawans(request):
 def more_one_padawan(request):
     padawans = []
     for jedi in Jedi.objects.all():
-        padawan_count = padawan_count(jedi.id)
-        if padawan_count > 1:
-            padawans.append([jedi, str(padawan_count)])
+        padawans_count = padawan_count(jedi.id)
+        if padawans_count > 1:
+            padawans.append([jedi, str(padawans_count)])
     return render(request, 'more_one_padawan.html', {'padawans': padawans})
