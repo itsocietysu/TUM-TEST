@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
+from django.http import HttpResponse
 from .models import *
 from .forms import *
 
@@ -91,13 +92,35 @@ def results(request, jedi_id):
         }
     )
 
+def padawan_count(jedi_id):
+    return len(Candidate.objects.filter(jedi_id=jedi_id))
+
 
 def accept(request, jedi_id, candidate_id):
     padavan = Candidate.objects.get(pk=candidate_id)
     jedi = Jedi.objects.get(pk=jedi_id)
-    padavan.jedi = jedi
-    padavan.save()
-    email_subject = 'Вы приняты!'
-    email_body = 'Джедай {} принял вас в подаваны!'.format(jedi.name)
-    send_mail(email_subject, email_body, '', [padavan.email], fail_silently=False)
-    return redirect('/results/{}/'.format(jedi_id))
+    if padawan_count(jedi_id) <= 3:
+        padavan.jedi = jedi
+        padavan.save()
+        email_subject = 'Вы приняты!'
+        email_body = 'Джедай {} принял вас в подаваны!'.format(jedi.name)
+        send_mail(email_subject, email_body, '', [padavan.email], fail_silently=False)
+        return redirect('/results/{}/'.format(jedi_id))
+    else:
+        return HttpResponse("У вас уже много падаванов")
+
+
+def all_padawans(request):
+    padawans = []
+    for jedi in Jedi.objects.all():
+        padawans.append([jedi, str(padawan_count(jedi.id))])
+    return render(request, 'all_padawans.html', {'padawans': padawans})
+
+
+def more_one_padawan(request):
+    padawans = []
+    for jedi in Jedi.objects.all():
+        padawan_count = padawan_count(jedi.id)
+        if padawan_count > 1:
+            padawans.append([jedi, str(padawan_count)])
+    return render(request, 'more_one_padawan.html', {'padawans': padawans})

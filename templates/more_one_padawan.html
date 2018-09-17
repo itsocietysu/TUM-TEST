@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <p> Список джедаев, у которых больше одного падавана</p>
+    {% for padawan in padawans %}
+
+        <p> <b>{{ padawan.0.name }} :</b>  {{ padawan.1 }} </p>
+
+    {% endfor %}
+    
+{% endblock %}

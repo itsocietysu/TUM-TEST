@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <p> Количество падаванов каждого джедая</p>
+    {% for padawan in padawans %}
+
+        <p> <b>{{ padawan.0.name }} :</b>  {{ padawan.1 }} </p>
+
+    {% endfor %}
+    <a href="{% url 'more_one_padawan' %}">Больше одного падавана</a>
+{% endblock %}
