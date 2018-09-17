@@ -104,7 +104,10 @@ def accept(request, jedi_id, candidate_id):
         padavan.save()
         email_subject = 'Вы приняты!'
         email_body = 'Джедай {} принял вас в подаваны!'.format(jedi.name)
-        send_mail(email_subject, email_body, '', [padavan.email], fail_silently=False)
+        send_mail(email_subject, email_body, 'YOUR EMAIL HERE', [padavan.email], fail_silently=False)
+
+                                # INSERT YOUR EMAIL
+
         return redirect('/results/{}/'.format(jedi_id))
     else:
         return HttpResponse("У вас уже много падаванов")
