@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 
 from django.shortcuts import render, redirect
+from django.forms import formset_factory
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from .models import *
@@ -39,12 +40,13 @@ def candidate(request):
 
 
 def test(request, candidate_id):
+    TestFormSet = formset_factory(TestForm, extra=Question.objects.count())
     if request.method == "POST":
         formset = TestFormSet(request.POST)
         if formset.is_valid():
             new_test = Test(candidate_id=candidate_id)
             new_test.save()
-            for form, q in zip(formset.forms, Question.objects.all()):
+            for form, q in zip(formset, Question.objects.all()):
                 if form.is_valid():
                     new_result = TestResult(answer=form.cleaned_data['answer'], question_id=q.id, test_id=new_test.id)
                     new_result.save()
