@@ -14,8 +14,5 @@ class TestForm(forms.Form):
     answer = forms.ChoiceField(widget=forms.RadioSelect, choices=((True, 'True'), (False, 'False')))
 
 
-TestFormSet = formset_factory(TestForm, extra=len(Question.objects.all()))
-
-
 class JediForm(forms.Form):
     jedi = forms.ModelChoiceField(queryset=Jedi.objects.all())
