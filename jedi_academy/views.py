@@ -65,7 +65,7 @@ def jedi(request):
         form = JediForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            jedi_id = 1
+            jedi_id = cd['jedi'].id
             return redirect('/results/{}/'.format(jedi_id))
     else:
         form = JediForm()
